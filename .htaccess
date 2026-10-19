@@ -1,0 +1,11 @@
+# Hosting compartido (Hostinger): el código se despliega en public_html,
+# así que todas las peticiones se redirigen internamente a public/.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Nunca servir archivos ocultos (.env, .git, etc.)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

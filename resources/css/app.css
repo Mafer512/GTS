@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ocultar preventivamente componentes Alpine antes de su inicialización (Anti-FOUC) */
+[x-cloak] {
+    display: none !important;
+}
+
+@layer base {
+    :root {
+        /* Paleta Centralizada GTS — Grupo de Seguridad Tecnológica */
+        --gts-bg: #05070A;
+        --gts-bg-secondary: #0A0D12;
+
+        --gts-surface: #11151B;
+        --gts-surface-secondary: #151A21;
+        --gts-surface-elevated: #191F27;
+
+        --gts-border: #252C35;
+        --gts-border-subtle: #1B2129;
+
+        --gts-blue: #123A70;
+        --gts-blue-hover: #164A8A;
+        --gts-blue-light: #1B5AA3;
+        --gts-blue-accent: #1E64B7;
+
+        --gts-text-primary: #F2F5F8;
+        --gts-text-secondary: #9AA5B4;
+        --gts-text-tertiary: #707B8A;
+        --gts-text-disabled: #505A68;
+
+        --gts-success: #20C997;
+        --gts-warning: #E0A21A;
+        --gts-danger: #D83B52;
+        --gts-info: #3D82C6;
+
+        /* Variables existentes calibradas */
+        --canvas-base: #05070A;
+        --sidebar-base: #070A0F;
+        --topbar-base: #070A0F;
+        --surface-card: #11151B;
+        --surface-subtle: #151A21;
+        --surface-hover: #151B23;
+        --border-card: #252C35;
+        --border-subtle: #1B2129;
+        --color-primary: #123A70;
+        --color-primary-hover: #164A8A;
+        --text-primary: #F2F5F8;
+        --text-secondary: #9AA5B4;
+        --text-muted: #707B8A;
+    }
+
+    body {
+        background-color: var(--canvas-base);
+        color: var(--text-primary);
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Tabular numbers for clean numeric vertical alignment */
+    .tabular-nums {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+@layer components {
+    /* Contenedor de Tarjeta Enterprise GTS */
+    .card-enterprise {
+        background-color: #11151B;
+        border: 1px solid #252C35;
+        border-radius: 0.875rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+    .card-enterprise:hover {
+        border-color: #2A3440;
+    }
+
+    /* Tipografía de Folios e Identificadores Aeroportuarios */
+    .font-folio {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Botones de Estilo Corporativo / Mission Control */
+    .btn-enterprise-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: #123A70;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        border-radius: 0.625rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+    .btn-enterprise-primary:hover {
+        background-color: #164A8A;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+    }
+    .btn-enterprise-primary:active {
+        transform: scale(0.98);
+    }
+
+    /* Botón de Acciones Rápidas (Panel Derecho) */
+    .btn-quick-action {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border-radius: 0.75rem;
+        background-color: #0F141B;
+        border: 1px solid #252C35;
+        color: #E2E7ED;
+        transition: all 0.15s ease-in-out;
+        text-align: left;
+    }
+    .btn-quick-action:hover {
+        background-color: #171D25;
+        border-color: #2A3440;
+    }
+
+    .btn-enterprise-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: #151A21;
+        color: #9AA5B4;
+        font-weight: 500;
+        font-size: 0.8125rem;
+        border-radius: 0.625rem;
+        border: 1px solid #252C35;
+        transition: all 0.15s ease;
+    }
+    .btn-enterprise-secondary:hover {
+        background-color: #151B23;
+        color: #F2F5F8;
+        border-color: #2A3440;
+    }
+
+    /* Micro-puntos de Estado Operacional con Pulso */
+    .pulse-dot {
+        position: relative;
+        display: inline-flex;
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+    .pulse-dot-ping {
+        position: absolute;
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+        border-radius: 9999px;
+        opacity: 0.75;
+        animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    .pulse-dot-core {
+        position: relative;
+        display: inline-flex;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+    }
+
+    /* Barra de Desplazamiento Delgada Enterprise */
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #252C35;
+        border-radius: 9999px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #2A3440;
+    }
+}

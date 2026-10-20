@@ -1,4 +1,8 @@
-name: Desplegar en GitHub Pages
+name: Compilar y publicar aplicación web
+
+# Compila web/ y publica el resultado:
+#  - En la rama "hostinger" (siempre): Hostinger → Avanzado → GIT con rama "hostinger" sirve el sitio estático.
+#  - En GitHub Pages (opcional): crear la variable PUBLICAR_GITHUB_PAGES = true y activar Pages con "GitHub Actions".
 
 on:
   push:
@@ -9,12 +13,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
-  group: pages
+  group: web-deploy
   cancel-in-progress: true
 
 jobs:
@@ -40,12 +44,23 @@ jobs:
           VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
 
+      - name: Publicar en la rama hostinger
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: web/dist
+          publish_branch: hostinger
+          force_orphan: true
+          commit_message: 'Sitio compilado'
+
       - uses: actions/upload-pages-artifact@v3
+        if: vars.PUBLICAR_GITHUB_PAGES == 'true'
         with:
           path: web/dist
 
-  deploy:
+  deploy-github-pages:
     needs: build
+    if: vars.PUBLICAR_GITHUB_PAGES == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

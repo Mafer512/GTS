@@ -13,6 +13,11 @@
 
 ---
 
+> **Versión web sin PHP (GitHub Pages + Supabase):** la carpeta [`web/`](web/) contiene la aplicación estática y [`supabase/`](supabase/) la base de datos con toda la lógica de negocio.
+> Guía de publicación: [docs/31_despliegue_github_pages_supabase.md](docs/31_despliegue_github_pages_supabase.md).
+
+---
+
 ## 1. VISIÓN GENERAL Y CONTEXTO OPERATIVO
 
 **GIT** es una plataforma web corporativa de alta disponibilidad diseñada específicamente para gestionar, despachar, auditar y resolver el 100% de las contingencias e incidencias tecnológicas que impactan la operación aeroportuaria del **AIFA (Aeropuerto Internacional Felipe Ángeles)**.

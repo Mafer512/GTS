@@ -405,7 +405,7 @@ export function appLayout(content) {
 export function guestLayout(content) {
     return html`<div class="relative font-sans text-brand-text-primary antialiased bg-brand-canvas min-h-screen flex flex-col justify-center items-center p-4 overflow-hidden selection:bg-brand-primary selection:text-white">
         <!-- Fondo institucional: AIFA nocturno difuminado -->
-        <div class="gts-login-bg fixed inset-0 bg-cover bg-center scale-[1.02] blur-[2px] saturate-[1.1]" style="background-image: url('./images/aifa-noche.jpg');" aria-hidden="true"></div>
+        <div class="gts-login-bg fixed inset-0 bg-cover bg-center scale-[1.02] blur-[2px] saturate-[1.1]" style="background-image: url('./images/aifa-noche-4k.jpg');" aria-hidden="true"></div>
         <div class="fixed inset-0 bg-gradient-to-b from-[#05070A]/45 via-[#05070A]/15 to-[#05070A]/60" aria-hidden="true"></div>
         <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,7,10,0.45)_80%)]" aria-hidden="true"></div>
 

@@ -403,17 +403,22 @@ export function appLayout(content) {
 }
 
 export function guestLayout(content) {
-    return html`<div class="font-sans text-brand-text-primary antialiased bg-brand-canvas min-h-screen flex flex-col justify-center items-center p-4 selection:bg-brand-primary selection:text-white">
-        <div class="w-full sm:max-w-md flex flex-col items-center gap-6">
+    return html`<div class="relative font-sans text-brand-text-primary antialiased bg-brand-canvas min-h-screen flex flex-col justify-center items-center p-4 overflow-hidden selection:bg-brand-primary selection:text-white">
+        <!-- Fondo institucional: AIFA nocturno difuminado -->
+        <div class="gts-login-bg fixed inset-0 bg-cover bg-center scale-110 blur-[7px] saturate-[1.15]" style="background-image: url('./images/aifa-noche.jpg');" aria-hidden="true"></div>
+        <div class="fixed inset-0 bg-gradient-to-b from-[#05070A]/65 via-[#05070A]/35 to-[#05070A]/80" aria-hidden="true"></div>
+        <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,7,10,0.55)_78%)]" aria-hidden="true"></div>
+
+        <div class="relative z-10 w-full sm:max-w-md flex flex-col items-center gap-6">
             <a href="#/login" class="flex flex-col items-center gap-2 group focus:outline-none">
-                ${applicationLogo({ imgClass: 'w-20 h-20' })}
-                <div class="flex flex-col items-center text-center mt-1">
+                ${applicationLogo({ imgClass: 'w-20 h-20 drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)]' })}
+                <div class="flex flex-col items-center text-center mt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                     <span class="text-xl font-bold text-brand-text-primary tracking-wider leading-tight">GTS AIFA</span>
-                    <span class="text-xs text-brand-text-muted mt-0.5">Grupo de Seguridad Tecnológica</span>
+                    <span class="text-xs text-[#C5CED8] mt-0.5">Grupo de Seguridad Tecnológica</span>
                 </div>
             </a>
-            <div class="w-full bg-brand-surface border border-brand-border rounded-2xl shadow-enterprise p-6 sm:p-8">${content}</div>
-            <div class="flex items-center gap-2 text-[11px] font-mono text-brand-text-muted">
+            <div class="w-full bg-[#11151B]/75 backdrop-blur-xl border border-white/10 rounded-2xl shadow-enterprise-lg p-6 sm:p-8">${content}</div>
+            <div class="flex items-center gap-2 text-[11px] font-mono text-[#A8B0BC] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#20C997]"></span>
                 <span>NOC / APOC • Sistema Operativo Seguro</span>
             </div>

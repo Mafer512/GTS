@@ -20,6 +20,8 @@ import {
     formattedSize,
     fileIcon,
     fileBadgeColor,
+    gpsFromLocation,
+    mapsUrl,
 } from '../../models/incident.js';
 
 let page = null;
@@ -392,6 +394,7 @@ export default {
         };
 
         const badge = originBadge(inc);
+        const gps = gpsFromLocation(inc.location);
         const responsibleName = inc.is_assigned_to_tics ? 'TICS' : inc.assigned_to?.name ?? 'Sin asignar';
 
         return html`<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6" x-data="incidentShowPage">
@@ -742,7 +745,16 @@ export default {
                         </h2>
                         <dl class="flex flex-col gap-3 text-xs">
                             <div class="flex justify-between py-1.5 border-b border-border-subtle/50"><dt class="text-outline">Subsistema:</dt><dd class="text-on-surface font-semibold">${inc.category.name}</dd></div>
-                            <div class="flex justify-between py-1.5 border-b border-border-subtle/50"><dt class="text-outline">Ubicación:</dt><dd class="text-on-surface font-semibold text-right max-w-[180px]">${inc.location}</dd></div>
+                            <div class="flex justify-between gap-3 py-1.5 border-b border-border-subtle/50">
+                                <dt class="text-outline shrink-0">Ubicación:</dt>
+                                <dd class="text-on-surface font-semibold text-right max-w-[220px] break-words flex flex-col items-end gap-1">
+                                    <span>${inc.location}</span>
+                                    ${gps
+                                        ? html`<a href="${mapsUrl(gps)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 text-[11px] font-semibold transition-colors">
+                                            <span class="material-symbols-outlined text-[14px]">map</span><span>Ver en mapa</span></a>`
+                                        : ''}
+                                </dd>
+                            </div>
                             <div class="flex justify-between py-1.5 border-b border-border-subtle/50">
                                 <dt class="text-outline">Reportado Por:</dt>
                                 <dd class="text-on-surface font-semibold flex items-center gap-1.5">

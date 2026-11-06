@@ -6,11 +6,11 @@ import * as gates from '../../policies/gates.js';
 import { dashboard } from '../../services/appServices.js';
 import { formatDate } from '../../lib/format.js';
 import { badgePriority, badgeStatus, applicationLogo } from '../components/ui.js';
-import { originBadge, categoryIcon } from '../../models/incident.js';
+import { originBadge, categoryIcon, shortTitle } from '../../models/incident.js';
 
 function recentRows(incidents) {
     if (!incidents.length) {
-        return html`<tr><td colspan="5" class="py-6 text-center text-xs text-[#7E8998]">No hay incidencias registradas en el sistema.</td></tr>`;
+        return html`<tr><td colspan="6" class="py-6 text-center text-xs text-[#7E8998]">No hay incidencias registradas en el sistema.</td></tr>`;
     }
     return html`${incidents.slice(0, 5).map((inc) => {
         const badge = originBadge(inc);
@@ -22,6 +22,7 @@ function recentRows(incidents) {
                     ${badge ? html`<span class="${cls('inline-flex items-center px-1 py-0.2 rounded text-[8.5px] font-bold font-mono tracking-wider border', badge.bg, badge.text, badge.border)}" title="${badge.title}">${badge.label}</span>` : ''}
                 </div>
             </td>
+            <td class="py-1.5 px-3.5 whitespace-nowrap text-[#DDE3EA] font-medium" title="${inc.title}">${shortTitle(inc.title)}</td>
             <td class="py-1.5 px-3.5 text-[#7E8998] font-mono whitespace-nowrap">${formatDate(inc.created_at, 'd/m/Y H:i')}</td>
             <td class="py-1.5 px-3.5 whitespace-nowrap">
                 <span class="flex items-center gap-1.5">
@@ -269,6 +270,7 @@ export default {
                                 <thead>
                                     <tr class="bg-[#0D1117] text-[10px] font-semibold text-[#7E8998] border-b border-[#202731] sticky top-0 z-10 select-none">
                                         <th class="py-1.5 px-3.5 font-mono">Folio</th>
+                                        <th class="py-1.5 px-3.5">Falla</th>
                                         <th class="py-1.5 px-3.5">Fecha / Hora</th>
                                         <th class="py-1.5 px-3.5">Tipo / Categoría</th>
                                         <th class="py-1.5 px-3.5">Estado</th>

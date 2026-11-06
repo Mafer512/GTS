@@ -130,6 +130,22 @@ export function fileBadgeColor(att) {
     return 'text-amber-400 bg-amber-500/10 border-amber-500/30';
 }
 
+// Título abreviado (primeras N palabras) para tablas compactas
+export function shortTitle(title, maxWords = 5) {
+    const words = String(title ?? '').trim().split(/\s+/).filter(Boolean);
+    return words.length > maxWords ? `${words.slice(0, maxWords).join(' ')}…` : words.join(' ');
+}
+
+// Coordenadas GPS capturadas en la ubicación ("… · GPS 19.736512, -99.012345 (±12 m)")
+const GPS_PATTERN = /GPS (-?\d{1,3}\.\d+), (-?\d{1,3}\.\d+)(?: \(±\d+ m\))?/;
+
+export function gpsFromLocation(location) {
+    const match = String(location ?? '').match(GPS_PATTERN);
+    return match ? { lat: match[1], lng: match[2] } : null;
+}
+
+export const mapsUrl = ({ lat, lng }) => `https://www.google.com/maps?q=${lat},${lng}`;
+
 // Iconos de categorías en "Últimas incidencias"
 export function categoryIcon(slug) {
     if (slug === 'cctv') return 'videocam';

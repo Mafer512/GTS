@@ -18,8 +18,48 @@ Alpine.data('incidentCreateForm', () => ({
     isDragging: false,
     errorMessage: '',
 
+    locating: false,
+    gpsInfo: '',
+    gpsError: '',
+
     get charCount() {
         return this.form.description.length;
+    },
+
+    // Ubicación precisa del dispositivo (GPS) agregada al campo de ubicación
+    useMyLocation() {
+        this.gpsInfo = '';
+        this.gpsError = '';
+        if (!('geolocation' in navigator)) {
+            this.gpsError = 'Este navegador no permite obtener la ubicación del dispositivo.';
+            return;
+        }
+        if (!window.isSecureContext) {
+            this.gpsError = 'La ubicación precisa solo está disponible en conexiones seguras (https).';
+            return;
+        }
+        this.locating = true;
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const { latitude, longitude, accuracy } = pos.coords;
+                const meters = Math.round(accuracy);
+                const coords = `GPS ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (±${meters} m)`;
+                const base = this.form.location.replace(/\s*·?\s*GPS -?\d+\.\d+, -?\d+\.\d+(?: \(±\d+ m\))?\s*$/, '').trim();
+                this.form.location = (base ? `${base} · ${coords}` : coords).slice(0, 255);
+                this.gpsInfo = `Ubicación capturada con una precisión aproximada de ${meters} m.`;
+                this.locating = false;
+            },
+            (err) => {
+                this.locating = false;
+                this.gpsError =
+                    {
+                        1: 'Permiso de ubicación denegado. Habilítelo en la configuración del navegador para este sitio.',
+                        2: 'No fue posible determinar la ubicación del dispositivo. Verifique que el GPS esté activo.',
+                        3: 'Se agotó el tiempo para obtener la ubicación. Intente nuevamente.',
+                    }[err.code] ?? 'No fue posible obtener la ubicación del dispositivo.';
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        );
     },
 
     handleFileSelect(event) {
@@ -184,27 +224,45 @@ export default {
                                             id="location" placeholder="ej. Terminal 1 - Nivel 2, Puerta 14B" required autocomplete="off" type="text" maxlength="255" />
                                         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">location_on</span>
                                     </div>
+                                    <div class="flex items-center justify-end gap-2 flex-wrap mt-1">
+                                        <span class="text-[11px] text-outline flex items-center gap-1">
+                                            Si desea utilizar su ubicación precisa, presione el botón
+                                            <span class="material-symbols-outlined text-[14px] text-primary">arrow_forward</span>
+                                        </span>
+                                        <button type="button" @click="useMyLocation()" :disabled="locating"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high hover:bg-surface-container text-primary text-xs font-semibold rounded-lg border border-border-subtle hover:border-primary/40 transition-colors shadow-sm disabled:opacity-60 disabled:cursor-wait"
+                                            title="Agregar la ubicación GPS actual de este dispositivo">
+                                            <span x-show="locating" x-cloak class="gts-spinner text-[14px]" aria-hidden="true"></span>
+                                            <span x-show="!locating" class="material-symbols-outlined text-[16px]">my_location</span>
+                                            <span x-text="locating ? 'Obteniendo ubicación…' : 'Usar mi ubicación'">Usar mi ubicación</span>
+                                        </button>
+                                    </div>
+                                    <p x-show="gpsInfo" x-cloak class="text-[11px] text-status-resolved flex items-center gap-1 justify-end">
+                                        <span class="material-symbols-outlined text-[14px]">check_circle</span><span x-text="gpsInfo"></span>
+                                    </p>
+                                    <p x-show="gpsError" x-cloak class="text-[11px] text-[#E66A7A] flex items-center gap-1 justify-end">
+                                        <span class="material-symbols-outlined text-[14px]">error</span><span x-text="gpsError"></span>
+                                    </p>
                                 </div>
                             </div>
 
                             <div class="flex flex-col gap-2 pt-1">
                                 <label class="text-xs font-medium text-on-surface flex items-center justify-between flex-wrap gap-2">
                                     <span>Prioridad Sugerida <span class="text-status-critical">*</span></span>
-                                    <span class="text-outline text-xs">Determina el tiempo de respuesta estimado</span>
+                                    <span class="text-outline text-xs">Seleccione el nivel de severidad</span>
                                 </label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2.5">
                                     ${data.priorities.map((p) => {
                                         const [text, dot] = PRIORITY_COLORS[p.slug] ?? ['text-primary', 'bg-primary'];
                                         return html`<label class="group relative flex flex-col p-3 rounded-lg bg-surface-container-low border border-border-subtle hover:border-border-active transition-all cursor-pointer has-[:checked]:bg-surface-overlay has-[:checked]:border-primary/50 shadow-sm">
                                             <input class="sr-only peer" x-model="form.priority_id" name="priority_id" type="radio" value="${p.id}" />
-                                            <div class="flex items-center justify-between mb-1.5">
+                                            <div class="flex items-center justify-between">
                                                 <span class="${cls('text-xs font-semibold flex items-center gap-1.5', text)}">
                                                     <span class="${cls('w-2 h-2 rounded-full inline-block', dot, p.slug === 'critica' && 'animate-ping')}"></span>
                                                     ${p.name}
                                                 </span>
                                                 <span class="material-symbols-outlined text-[16px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
                                             </div>
-                                            <span class="text-xs text-on-surface-variant leading-snug">Tiempo de respuesta estimado: ${p.sla_minutes} minutos</span>
                                         </label>`;
                                     })}
                                 </div>

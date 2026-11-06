@@ -12,13 +12,15 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
         <!-- Google Material Symbols Outlined -->
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
 
         <!-- Configuración opcional en tiempo de ejecución (Supabase URL / anon key) -->
         <script src="./config.js"></script>
         <script type="module" src="/src/main.js"></script>
     </head>
     <body class="bg-brand-canvas text-brand-text-primary antialiased font-sans selection:bg-brand-primary selection:text-white">
+        <!-- Precarga de la fuente de íconos desde el primer momento (evita ver nombres de íconos como texto) -->
+        <span class="material-symbols-outlined" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none">home</span>
         <div id="app">
             <div class="min-h-screen flex items-center justify-center text-xs font-mono text-brand-text-muted gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#20C997] animate-pulse"></span>

@@ -356,7 +356,8 @@ export default {
                         </button>
                         <button :disabled="submitting" :class="submitting ? 'opacity-75 cursor-not-allowed pointer-events-none' : ''"
                             class="flex-1 sm:flex-initial px-6 py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container hover:text-on-primary text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer" id="btnSubmit" type="submit">
-                            <span class="material-symbols-outlined text-[18px]" :class="submitting ? 'animate-spin' : ''" x-text="submitting ? 'progress_activity' : 'send'">send</span>
+                            <span x-show="submitting" x-cloak class="gts-spinner text-[16px]" aria-hidden="true"></span>
+                            <span x-show="!submitting" class="material-symbols-outlined text-[18px]">send</span>
                             <span x-text="submitting ? 'Despachando a GTS...' : 'Crear Incidencia'">Crear Incidencia</span>
                         </button>
                     </div>

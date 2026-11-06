@@ -7,6 +7,21 @@
     display: none !important;
 }
 
+/* Indicador de carga independiente de la fuente de íconos (se dimensiona con text-[..]) */
+.gts-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 9999px;
+    animation: gts-spin 0.7s linear infinite;
+}
+@keyframes gts-spin {
+    to { transform: rotate(360deg); }
+}
+
 /* Fondo de la pantalla de acceso: aparición suave */
 @keyframes gts-login-bg-in {
     from { opacity: 0; transform: scale(1.06); }

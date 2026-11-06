@@ -160,7 +160,7 @@ export function configTabs(active, { showUsers, showRoles }) {
 // Estado de carga
 export function loadingBlock(label = 'Cargando información operativa…') {
     return html`<div class="w-full py-24 flex items-center justify-center gap-2 text-xs font-mono text-brand-text-muted">
-        <span class="material-symbols-outlined animate-spin text-[18px] text-[#3D82C6]">progress_activity</span>
+        <span class="gts-spinner text-[16px] text-[#3D82C6]" aria-hidden="true"></span>
         <span>${label}</span>
     </div>`;
 }

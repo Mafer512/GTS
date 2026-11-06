@@ -65,7 +65,7 @@ export default {
 
             <div class="flex items-center justify-end mt-4">
                 <button type="submit" :disabled="submitting" class="ms-3 inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover active:bg-brand-primary-active text-white text-xs font-semibold rounded-lg shadow-sm border border-white/10 focus:outline-none focus:ring-1 focus:ring-[#164A8A] transition-all duration-150 disabled:opacity-60">
-                    <span x-show="submitting" x-cloak class="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
+                    <span x-show="submitting" x-cloak class="gts-spinner text-[14px]" aria-hidden="true"></span>
                     <span x-text="submitting ? 'Verificando…' : 'Iniciar sesión'">Iniciar sesión</span>
                 </button>
             </div>

@@ -202,7 +202,8 @@ export default {
                 ${canExport
                     ? html`<div class="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
                         <button type="button" @click="generatePdf()" :disabled="generating" class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-[#3D82C6] hover:bg-[#316cb0] text-white font-semibold text-xs rounded-xl shadow-md transition-all group disabled:opacity-70" title="Se abrirá el diálogo de impresión: elija «Guardar como PDF»">
-                            <span class="material-symbols-outlined text-[18px]" :class="generating ? 'animate-spin' : ''" x-text="generating ? 'progress_activity' : 'picture_as_pdf'">picture_as_pdf</span>
+                            <span x-show="generating" x-cloak class="gts-spinner text-[16px]" aria-hidden="true"></span>
+                            <span x-show="!generating" class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
                             <span x-text="selectedIds.length > 0 ? \`Descargar PDF (\${selectedIds.length} seleccionadas)\` : 'Descargar PDF Institucional'"></span>
                         </button>
                         <button type="button" @click="showEmailModal = true" class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-[#11151B] hover:bg-[#151B23] text-[#DDE3EA] border border-[#263241] font-semibold text-xs rounded-xl transition-all">

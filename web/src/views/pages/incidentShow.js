@@ -865,7 +865,8 @@ export default {
                     <div class="flex items-center justify-end gap-3 pt-2">
                         <button type="button" @click="showUploadModal = false" class="px-4 py-2 bg-surface-container-high hover:bg-surface-container text-on-surface font-semibold text-xs rounded-xl border border-border-subtle transition-colors">Cancelar</button>
                         <button type="submit" :disabled="busy" class="px-4 py-2.5 bg-primary hover:bg-primary/90 text-on-primary font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-60">
-                            <span class="material-symbols-outlined text-[18px]" :class="busy ? 'animate-spin' : ''" x-text="busy ? 'progress_activity' : 'cloud_upload'">cloud_upload</span>
+                            <span x-show="busy" x-cloak class="gts-spinner text-[16px]" aria-hidden="true"></span>
+                            <span x-show="!busy" class="material-symbols-outlined text-[18px]">cloud_upload</span>
                             <span x-text="busy ? 'Resguardando...' : 'Subir y Resguardar'">Subir y Resguardar</span>
                         </button>
                     </div>

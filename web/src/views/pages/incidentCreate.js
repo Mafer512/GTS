@@ -10,6 +10,10 @@ import { create, createForm, MAX_FILES, MAX_BYTES } from '../../services/inciden
 
 let defaultPriority = '';
 
+// Precisión mínima aceptada para las coordenadas GPS y tiempo máximo para alcanzarla
+const GPS_MAX_ACCURACY_M = 10;
+const GPS_MAX_WAIT_MS = 45000;
+
 Alpine.data('incidentCreateForm', () => ({
     form: { title: '', category_id: '', location: '', priority_id: defaultPriority, description: '' },
     errors: [],
@@ -19,14 +23,24 @@ Alpine.data('incidentCreateForm', () => ({
     errorMessage: '',
 
     locating: false,
+    gpsProgress: '',
     gpsInfo: '',
     gpsError: '',
+    gpsWatchId: null,
+    gpsTimer: null,
+    gpsBest: null,
 
     get charCount() {
         return this.form.description.length;
     },
 
-    // Ubicación precisa del dispositivo (GPS) agregada al campo de ubicación
+    destroy() {
+        this.stopLocating();
+    },
+
+    // Ubicación precisa del dispositivo (GPS) agregada al campo de ubicación.
+    // La primera lectura suele venir de la red (decenas de metros); se sigue
+    // escuchando al GPS hasta alcanzar GPS_MAX_ACCURACY_M o agotar GPS_MAX_WAIT_MS.
     useMyLocation() {
         this.gpsInfo = '';
         this.gpsError = '';
@@ -38,28 +52,64 @@ Alpine.data('incidentCreateForm', () => ({
             this.gpsError = 'La ubicación precisa solo está disponible en conexiones seguras (https).';
             return;
         }
+        this.stopLocating();
         this.locating = true;
-        navigator.geolocation.getCurrentPosition(
+        this.gpsBest = null;
+        this.gpsProgress = 'Buscando señal GPS…';
+
+        this.gpsWatchId = navigator.geolocation.watchPosition(
             (pos) => {
-                const { latitude, longitude, accuracy } = pos.coords;
-                const meters = Math.round(accuracy);
-                const coords = `GPS ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (±${meters} m)`;
-                const base = this.form.location.replace(/\s*·?\s*GPS -?\d+\.\d+, -?\d+\.\d+(?: \(±\d+ m\))?\s*$/, '').trim();
-                this.form.location = (base ? `${base} · ${coords}` : coords).slice(0, 255);
-                this.gpsInfo = `Ubicación capturada con una precisión aproximada de ${meters} m.`;
-                this.locating = false;
+                const { accuracy } = pos.coords;
+                if (!this.gpsBest || accuracy < this.gpsBest.coords.accuracy) this.gpsBest = pos;
+                const best = Math.round(this.gpsBest.coords.accuracy);
+                if (this.gpsBest.coords.accuracy <= GPS_MAX_ACCURACY_M) {
+                    this.stopLocating();
+                    this.applyCoordinates(this.gpsBest.coords);
+                    return;
+                }
+                this.gpsProgress = `Afinando señal GPS… precisión actual ±${best} m (se requiere ±${GPS_MAX_ACCURACY_M} m o menos)`;
             },
             (err) => {
-                this.locating = false;
+                this.stopLocating();
                 this.gpsError =
                     {
                         1: 'Permiso de ubicación denegado. Habilítelo en la configuración del navegador para este sitio.',
                         2: 'No fue posible determinar la ubicación del dispositivo. Verifique que el GPS esté activo.',
-                        3: 'Se agotó el tiempo para obtener la ubicación. Intente nuevamente.',
                     }[err.code] ?? 'No fue posible obtener la ubicación del dispositivo.';
             },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            { enableHighAccuracy: true, maximumAge: 0 }
         );
+
+        this.gpsTimer = setTimeout(() => {
+            const best = this.gpsBest ? Math.round(this.gpsBest.coords.accuracy) : null;
+            this.stopLocating();
+            this.gpsError =
+                (best === null
+                    ? 'No se recibió señal GPS.'
+                    : `No se alcanzó la precisión requerida de ±${GPS_MAX_ACCURACY_M} m (mejor lectura: ±${best} m).`) +
+                ' Ubíquese en un área abierta o junto a una ventana, active la ubicación precisa del dispositivo e intente de nuevo.';
+        }, GPS_MAX_WAIT_MS);
+    },
+
+    cancelLocating() {
+        this.stopLocating();
+    },
+
+    stopLocating() {
+        if (this.gpsWatchId !== null) navigator.geolocation.clearWatch(this.gpsWatchId);
+        clearTimeout(this.gpsTimer);
+        this.gpsWatchId = null;
+        this.gpsTimer = null;
+        this.locating = false;
+        this.gpsProgress = '';
+    },
+
+    applyCoordinates({ latitude, longitude, accuracy }) {
+        const meters = Math.max(1, Math.round(accuracy));
+        const coords = `GPS ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (±${meters} m)`;
+        const base = this.form.location.replace(/\s*·?\s*GPS -?\d+\.\d+, -?\d+\.\d+(?: \(±\d+ m\))?\s*$/, '').trim();
+        this.form.location = (base ? `${base} · ${coords}` : coords).slice(0, 255);
+        this.gpsInfo = `Ubicación capturada con una precisión de ±${meters} m.`;
     },
 
     handleFileSelect(event) {
@@ -237,10 +287,14 @@ export default {
                                             <span x-text="locating ? 'Obteniendo ubicación…' : 'Usar mi ubicación'">Usar mi ubicación</span>
                                         </button>
                                     </div>
+                                    <p x-show="locating" x-cloak class="text-[11px] text-status-warning flex items-center gap-1.5 justify-end text-right">
+                                        <span x-text="gpsProgress"></span>
+                                        <button type="button" @click="cancelLocating()" class="underline hover:text-on-surface shrink-0">Cancelar</button>
+                                    </p>
                                     <p x-show="gpsInfo" x-cloak class="text-[11px] text-status-resolved flex items-center gap-1 justify-end">
                                         <span class="material-symbols-outlined text-[14px]">check_circle</span><span x-text="gpsInfo"></span>
                                     </p>
-                                    <p x-show="gpsError" x-cloak class="text-[11px] text-[#E66A7A] flex items-center gap-1 justify-end">
+                                    <p x-show="gpsError" x-cloak class="text-[11px] text-[#E66A7A] flex items-start gap-1 justify-end text-right">
                                         <span class="material-symbols-outlined text-[14px]">error</span><span x-text="gpsError"></span>
                                     </p>
                                 </div>
